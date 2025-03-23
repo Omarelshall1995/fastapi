@@ -1,0 +1,29 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: argocd
+  name: argocd-admin
+rules:
+  - apiGroups: [""]
+    resources: ["applications"]
+    verbs: ["get", "list", "sync", "update", "delete"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "sync"]
+
+
+
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: argocd-admin-binding
+  namespace: argocd
+subjects:
+  - kind: User
+    name: admin  # This is the default admin user, replace if different
+roleRef:
+  kind: Role
+  name: argocd-admin
+  apiGroup: rbac.authorization.k8s.io
