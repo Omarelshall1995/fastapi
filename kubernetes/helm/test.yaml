@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-redis-pod
+spec:
+  containers:
+    - name: test-redis-container
+      image: redis:7.0.15-alpine
