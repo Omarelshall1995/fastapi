@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: websocket-service
+  namespace: default
+  labels:
+    app: websocket
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: websocket
+  template:
+    metadata:
+      labels:
+        app: websocket
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      imagePullSecrets:
+        - name: dockerhub-secret
+      containers:
+        - name: websocket
+          image: oshall95/websocket-service:latest
+          ports:
+            - containerPort: 8000
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+            requests:
+              cpu: "200m"
+              memory: "128Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: websocket-service
+  namespace: default
+spec:
+  selector:
+    app: websocket
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP
