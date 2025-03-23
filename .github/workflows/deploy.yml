@@ -21,8 +21,14 @@ jobs:
     - name: Set Kubernetes Context
       run: az aks get-credentials --resource-group my-new-resource-group --name my-new-cluster --overwrite-existing
 
-    - name: Deploy to Kubernetes
+    - name: Install Helm
       run: |
-        kubectl apply -f kubernetes/deployment.yaml
-        kubectl apply -f kubernetes/hpa.yaml
-        kubectl apply -f kubernetes/ingress.yaml
+        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+    - name: Deploy using Helm
+      run: |
+        helm upgrade --install websocket-service ./helm --namespace default --values ./helm/values.yaml
+
+    - name: Verify Deployment
+      run: |
+        kubectl get pods --namespace default
