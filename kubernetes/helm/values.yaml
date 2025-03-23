@@ -1,0 +1,24 @@
+namespace: default
+
+replicaCount: 1
+
+app:
+  name: websocket
+
+image:
+  repository: oshall95/websocket-service
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "256Mi"
+  requests:
+    cpu: "200m"
+    memory: "128Mi"
