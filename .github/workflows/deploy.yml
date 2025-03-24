@@ -26,10 +26,13 @@ jobs:
         kubectl config get-contexts
         kubectl config use-context new-cluster-2
 
-    - name: Deploy to Kubernetes
+    - name: Deploy to Kubernetes using Helm
       run: |
-        # Apply Kubernetes resources using Helm
-        helm upgrade --install websocket-service ./helm --namespace default --values ./helm/values.yaml
+        # Ensure Helm path is correct. Since helm folder is inside kubernetes, use ./kubernetes/helm.
+        helm upgrade --install websocket-service ./kubernetes/helm --namespace default --values ./kubernetes/helm/values.yaml
+
+    - name: Apply Kubernetes resources
+      run: |
         kubectl apply -f kubernetes/deployment.yaml
         kubectl apply -f kubernetes/hpa.yaml
         kubectl apply -f kubernetes/ingress.yaml
