@@ -13,22 +13,24 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Log in to Azure
+    - name: Set up Azure credentials
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Set Kubernetes Context
-      run: az aks get-credentials --resource-group my-new-resource-group --name my-new-cluster-2 --overwrite-existing
-
-    - name: Install Helm
       run: |
-        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+        # Fetch the Kubernetes credentials for the cluster
+        az aks get-credentials --resource-group my-new-resource-group --name new-cluster-2 --overwrite-existing
+        # Verify the context is set correctly
+        kubectl config get-contexts
+        kubectl config use-context new-cluster-2
 
-    - name: Deploy using Helm
+    - name: Deploy to Kubernetes
       run: |
+        # Apply Kubernetes resources using Helm
         helm upgrade --install websocket-service ./helm --namespace default --values ./helm/values.yaml
-
-    - name: Verify Deployment
-      run: |
-        kubectl get pods --namespace default
+        kubectl apply -f kubernetes/deployment.yaml
+        kubectl apply -f kubernetes/hpa.yaml
+        kubectl apply -f kubernetes/ingress.yaml
+        kubectl apply -f kubernetes/prometheus-service.yaml
