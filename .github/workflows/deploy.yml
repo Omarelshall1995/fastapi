@@ -19,7 +19,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Set Kubernetes Context
-      run: az aks get-credentials --resource-group my-new-resource-group --name my-new-cluster --overwrite-existing
+      run: az aks get-credentials --resource-group my-new-resource-group --name my-new-cluster-2 --overwrite-existing
 
     - name: Install Helm
       run: |
