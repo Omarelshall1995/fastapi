@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: websocket-allow-ingress
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: websocket
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector: {}  # Allows all internal cluster traffic
+        - namespaceSelector: {}  # Allows traffic from any namespace (optional)
+      ports:
+        - protocol: TCP
+          port: 8000  # Only allow WebSocket port
