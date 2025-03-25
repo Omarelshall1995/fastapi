@@ -10,33 +10,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Azure credentials
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Set up Azure credentials
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Set Kubernetes Context
-      run: |
-        # Fetch the Kubernetes credentials for the cluster
-        az aks get-credentials --resource-group my-new-resource-group --name new-cluster-2 --overwrite-existing
-        # Verify the context is set correctly
-        kubectl config get-contexts
-        kubectl config use-context new-cluster-2
+      - name: Set Kubernetes Context
+        run: |
+          # Fetch the Kubernetes credentials for the cluster
+          az aks get-credentials --resource-group my-new-resource-group --name new-cluster-2 --overwrite-existing
+          # Verify the context is set correctly
+          kubectl config get-contexts
+          kubectl config use-context new-cluster-2
 
-    - name: Deploy to Kubernetes using Helm
-      run: |
-        # Ensure Helm path is correct. Since helm folder is inside kubernetes, use ./kubernetes/helm.
-        helm upgrade --install websocket-service ./kubernetes/helm --namespace default --values ./kubernetes/helm/values.yaml
+      - name: Deploy to Kubernetes using Helm
+        run: |
+          # Ensure Helm path is correct. Since helm folder is inside kubernetes, use ./kubernetes/helm.
+          helm upgrade --install websocket-service ./kubernetes/helm --namespace default --values ./kubernetes/helm/values.yaml
 
-    - name: Apply Kubernetes resources
-      run: |
-        kubectl apply -f kubernetes/deployment.yaml
-        kubectl apply -f kubernetes/hpa.yaml
-        kubectl apply -f kubernetes/ingress.yaml
- 	kubectl apply -f kubernetes/blackbox-exporter.yaml
-	kubectl apply -f kubernetes/network-policy.yaml
-	kubectl apply -f prometheus.yaml
-
+      - name: Apply Kubernetes resources
+        run: |
+          kubectl apply -f kubernetes/blackbox-exporter.yaml
+          kubectl apply -f kubernetes/deployment.yaml
+          kubectl apply -f kubernetes/hpa.yaml
+          kubectl apply -f kubernetes/network-policy.yaml
+          kubectl apply -f kubernetes/ingress.yaml
+          kubectl apply -f kubernetes/prometheus.yaml
